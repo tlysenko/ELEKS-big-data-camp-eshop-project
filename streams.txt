@@ -1,0 +1,34 @@
+CREATE STREAM camp_users_input (
+    email VARCHAR,
+    first_name VARCHAR,
+    last_name VARCHAR,
+    age INT,
+    address VARCHAR,
+    gender VARCHAR,
+    has_children_under_16 BOOLEAN
+  ) WITH (
+    KAFKA_TOPIC = 'camp-users2',
+    VALUE_FORMAT = 'AVRO'
+  );
+
+CREATE STREAM adult_users AS
+    SELECT
+        email,
+        first_name,
+        last_name,
+        age,
+        address,
+        gender,
+        has_children_under_16
+    FROM camp_users_input
+    WHERE age>18
+    EMIT CHANGES;
+
+CREATE TABLE count_by_gender AS
+    SELECT
+        gender,
+        COUNT(gender) as cnt
+    FROM camp_users_input
+    WINDOW TUMBLING (SIZE 1 MINUTE, GRACE PERIOD 2 HOURS)
+    GROUP BY gender
+    EMIT CHANGES;
