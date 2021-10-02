@@ -23,5 +23,5 @@ if __name__ == '__main__':
     for users in UserGenerator.generate():
         user_producer.send_records(users)
 
-
-# to check: ./bin/kafka-avro-console-consumer --topic user-test --bootstrap-server localhost:9092 --from beginning
+# to check:
+# ./bin/kafka-avro-console-consumer --topic user-test --bootstrap-server localhost:9092 --from beginning
